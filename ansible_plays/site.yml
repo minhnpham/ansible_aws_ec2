@@ -7,6 +7,7 @@
 
   vars_files:
     - group_vars/common.yml
+    - group_vars/aws.vpc.yml
   
   roles:
     - roles/aws_create_vpc
