@@ -18,6 +18,49 @@
   register: my_vpc
 
 # Parse/Set the created VPC ID
-- name: "Set fact VPC ID"
+- name: Set fact VPC ID
   set_fact:
     vpc_id: "{{ my_vpc.vpc.id }}"
+
+# Create VPC Subnets
+- name: Create VPC Subnets
+  ec2_vpc_subnet:
+    region: "{{ aws_region }}"
+    vpc_id: "{{ vpc_id }}"
+    cidr: "{{ item.value.cidr }}"
+    az: "{{ item.value.az }}"
+    tags:
+      Name: "{{ item.key }}"
+  with_dict: "{{ vpc_subnets }}"
+  register: my_vpc_subnets
+
+- name: DEBUG my_vpc_subnets
+  debug:
+    var: my_vpc_subnets
+  when: DEBUGMODE
+
+# Loop my_vpc_subnet.results list, to Parse/Set the subnet details into the dict vpc_subnet_ids
+- name: Set fact VPC subnet IDs
+  set_fact:
+    vpc_subnet_ids: "{{ vpc_subnet_ids | default({}) | combine({ item.subnet.tags.Name: item.subnet.id }) }}"
+  loop: "{{ my_vpc_subnets.results }}"
+
+- name: DEBUG vpc_subnet_ids
+  debug:
+    var: vpc_subnet_ids
+  when: DEBUGMODE
+
+- name: DEBUG vpc_security_groups
+  debug:
+    var: vpc_security_groups
+  when: DEBUGMODE
+
+# Create Security Groups
+- name: Create Security Groups
+  ec2_group:
+    region: "{{ aws_region }}"
+    vpc_id: "{{ vpc_id }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    rules: "{{ item.rules }}"
+  loop: "{{ vpc_security_groups }}"

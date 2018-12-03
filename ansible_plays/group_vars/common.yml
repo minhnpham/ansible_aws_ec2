@@ -1,7 +1,7 @@
 ---
 # group_vars/common.yml
 # global common vars
-
+DEBUGMODE: true
 ansible_connection: local
 aws_vpc_name: vpc-mnp
 aws_vpc_key: vpc-key-mnp
