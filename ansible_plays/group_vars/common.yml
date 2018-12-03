@@ -3,7 +3,7 @@
 # global common vars
 
 ansible_connection: local
-aws_vpc_name: vpc-name-mnp
+aws_vpc_name: vpc-mnp
 aws_vpc_key: vpc-key-mnp
 aws_region: ap-southeast-2  # Sydney
 # AWS Credentials will be injected via environment variables
