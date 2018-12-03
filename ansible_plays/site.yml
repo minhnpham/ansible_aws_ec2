@@ -1,0 +1,13 @@
+---
+
+- hosts: localhost
+  gather_facts: false
+  # become: yes
+  # become_method: sudo
+
+  vars_files:
+    - group_vars/common.yml
+  
+  roles:
+    - roles/aws_create_vpc
+#    - roles/docker

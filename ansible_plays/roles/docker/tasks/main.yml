@@ -1,0 +1,49 @@
+---
+# tasks file for roles/docker
+
+# This Role requires a RHEL / CENTOS base OS
+
+- name: START Role docker
+  debug:
+    msg: "START execution of role/docker"
+
+- name: Update all current installed packages
+  yum:
+    name: "*"
+    state: "latest"
+    update_cache: "yes"
+
+- name: Add the gpg key for the Docker repo
+  rpm_key:
+    key: "{{ docker.gpg_key }}"
+    state: "present"
+
+- name: Add Docker repo from the remote url
+  get_url:
+    url: "{{ docker.repo_url }}"
+    dest: "{{ docker.repo_path }}"
+    mode: 0644
+
+- name: Install Docker-CE and dependency packages
+  yum:
+    name: "{{ item }}"
+    state: "installed"
+    update_cache: "yes"
+  with_items: "{{ docker.packages }}"
+
+- name: Install pip
+  easy_install:
+    name: pip
+    state: latest
+
+# This is required so we can use the Ansible docker_image and docker_container modules
+- name: Install the Docker SDK for Python
+  pip:
+    name: "{{ item }}"
+  with_items: "{{ docker.pip }}"
+
+- name: Start Docker and configure as a boot startup service
+  service:
+    name: "docker"
+    state: "started"
+    enabled: "yes"
