@@ -1,6 +1,23 @@
 ---
 # tasks file for roles/aws_create_vpc
 
+# This role performs the following:
+# Creates a VPC
+# Provisions the public/private subnets in the VPC
+# Defines the Security Groups
+
 - name: START Role aws_create_vpc
   debug:
     msg: "START execution of role/aws_create_vpc"
+
+- name: Create VPC
+  ec2_vpc_net:
+    name: "{{ aws_vpc_name }}"
+    cidr_block: "{{ vpc_cidr }}"
+    region: "{{ aws_region }}"
+  register: my_vpc
+
+# Parse/Set the created VPC ID
+- name: "Set fact VPC ID"
+  set_fact:
+    vpc_id: "{{ my_vpc.vpc.id }}"
