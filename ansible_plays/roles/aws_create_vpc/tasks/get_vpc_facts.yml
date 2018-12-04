@@ -1,0 +1,23 @@
+---
+# Gather and Set facts variables about the VPC:
+# - VPC ID
+# - VPC Subnet IDs
+# - VPC Security Group IDs
+# - VPC IGW ID
+
+# Get VPC by name
+- name: VPC facts
+  ec2_vpc_net_facts:
+    filters:
+      "tag:Name": "{{ aws_vpc_name }}"
+  register: my_vpc_facts
+
+# Set VPC ID
+- name: Set fact my_vpc_id
+  set_fact:
+    my_vpc_id: "{{ my_vpc_facts.vpcs[0].id }}"
+
+- name: DEBUG my_vpc_id
+  debug:
+    var: my_vpc_id
+  when: DEBUGMODE
