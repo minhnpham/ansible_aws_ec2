@@ -12,3 +12,7 @@
   roles:
     - roles/aws_create_vpc
 #    - roles/docker
+  
+  tasks:
+    - name: Testing get_vpc_facts
+      include_tasks: roles/aws_create_vpc/tasks/get_vpc_facts.yml
