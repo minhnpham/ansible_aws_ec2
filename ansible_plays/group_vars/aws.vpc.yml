@@ -1,6 +1,16 @@
 ---
 # host_vars/aws.vpc.yml
 
+# Common resource group tag used to label all related project resources
+res_group_tag: mnp123
+
+aws_vpc_name: mnp-vpc
+aws_vpc_key: mnp-vpc-key
+aws_region: ap-southeast-2  # Sydney
+# AWS Credentials will be injected via environment variables
+# AWS_ACCESS_KEY_ID
+# AWS_SECRET_ACCESS_KEY
+
 # VPC CIDR block
 vpc_cidr: 10.250.0.0/16
 

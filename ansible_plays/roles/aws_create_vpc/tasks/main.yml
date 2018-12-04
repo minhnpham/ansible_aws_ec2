@@ -9,12 +9,16 @@
 - name: START Role aws_create_vpc
   debug:
     msg: "START execution of role/aws_create_vpc"
+  environment:
+    AWS_REGION: "{{ aws_region }}"
 
 - name: Create VPC
   ec2_vpc_net:
     name: "{{ aws_vpc_name }}"
     cidr_block: "{{ vpc_cidr }}"
     region: "{{ aws_region }}"
+    tags:
+      res_group_tag: "{{ res_group_tag }}"
   register: my_vpc
 
 # Parse/Set the created VPC ID
@@ -25,12 +29,12 @@
 # Create VPC Subnets
 - name: Create VPC Subnets
   ec2_vpc_subnet:
-    region: "{{ aws_region }}"
     vpc_id: "{{ vpc_id }}"
     cidr: "{{ item.value.cidr }}"
     az: "{{ item.value.az }}"
     tags:
       Name: "{{ item.key }}"
+      res_group_tag: "{{ res_group_tag }}"
   with_dict: "{{ vpc_subnets }}"
   register: my_vpc_subnets
 
@@ -58,9 +62,36 @@
 # Create Security Groups
 - name: Create Security Groups
   ec2_group:
-    region: "{{ aws_region }}"
     vpc_id: "{{ vpc_id }}"
     name: "{{ item.name }}"
     description: "{{ item.description }}"
     rules: "{{ item.rules }}"
+    tags:
+      res_group_tag: "{{ res_group_tag }}"
   loop: "{{ vpc_security_groups }}"
+
+# Create Internet Gateway
+- name: Create internet gateway
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      res_group_tag: "{{ res_group_tag }}"    
+  register: my_igw
+
+# Parse/Set Fact IGW ID
+- name: "Set fact Internet Gateway ID"
+  set_fact:
+    vpc_igw_id: "{{ my_igw.gateway_id }}"
+
+# Create Public Route Table for IGW, attach to the public subnets
+- name: Create Route Table for public subnets
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: "{{ aws_vpc_name }}-public"
+      res_group_tag: "{{ res_group_tag }}"
+    subnets:
+      - "{{ vpc_subnet_ids['public-az1'] }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ vpc_igw_id }}"
