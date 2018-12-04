@@ -1,0 +1,16 @@
+---
+# tasks file for roles/aws_provision_ec2
+
+# This role performs the following:
+# - Creates a EC2 key pair
+# - Creates a EC2 instance with CENTOS 7
+# - Configures Security Group for http and ssh
+# - Configures OS Firewall to deny ALL apart from http and ssh
+# - Install Docker CE
+# - Deploy and Start nginx container
+
+- name: START Role aws_provision_ec2
+  debug:
+    msg: "START execution of role/aws_provision_ec2"
+  environment:
+    AWS_REGION: "{{ aws_region }}"
