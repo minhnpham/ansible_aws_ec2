@@ -2,4 +2,4 @@
 # group_vars/common.yml
 # global common vars
 DEBUGMODE: true
-ansible_connection: local
+# ansible_connection: local

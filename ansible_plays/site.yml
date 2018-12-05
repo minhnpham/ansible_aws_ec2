@@ -3,8 +3,6 @@
 - name: Demo to provision AWS VPC and EC2
   hosts: localhost
   gather_facts: false
-  # become: yes
-  # become_method: sudo
 
   vars_files:
     - group_vars/common.yml
@@ -17,11 +15,14 @@
 
 - name: Install Docker CE into EC2 instances
   hosts: ec2_nodes
+  # user: centos  
   environment:
     ANSIBLE_HOST_KEY_CHECKING: False
+  # gather_facts: true
 
   vars_files:
     - group_vars/common.yml
   
   roles:
-    - { role: roles/docker, become: yes }
+    - { role: roles/docker, become: yes, become_method: sudo }
+    # - roles/docker

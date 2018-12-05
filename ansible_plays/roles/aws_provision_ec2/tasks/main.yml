@@ -54,6 +54,7 @@
     instance_tags:
       res_group_tag: "{{ res_group_tag }}"
       category: "webserver"
+      Name: "MNP_centos7_docker_nginx"
   register: my_ec2
 
 - name: DEBUG my_ec2
@@ -74,6 +75,7 @@
   add_host:
     groups: ec2_nodes
     hostname: "{{ my_ec2.instances[0].public_ip }}"
-    ansible_user: "{{ ec2.t2_micro_centos7.default_username }}"
+    # ansible_user: "{{ ec2.t2_micro_centos7.default_username }}"
+    ansible_ssh_user: "{{ ec2.t2_micro_centos7.default_username }}"
     ansible_ssh_private_key_file: "{{ playbook_dir }}/aws-ec2-key.pem"
     # ansible_become: yes
