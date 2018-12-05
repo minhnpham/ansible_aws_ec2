@@ -1,2 +1,10 @@
 ---
 # defaults file for roles/aws_provision_ec2
+
+ec2:
+  t2_micro_centos7:
+    ami: ami-d8c21dba # CENTOS 7:1801_01:x86_64:ap-southeast-2
+    # Notes: Using official AWS-Market Place AMI, ec2 user may need to subscribe to CENTOS marketplace to use this AMI
+    instance_type: t2.micro
+    default_username: centos
+

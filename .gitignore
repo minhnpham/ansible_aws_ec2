@@ -1,2 +1,3 @@
-aws_cred
+*.pem
+*.key
 site.retry

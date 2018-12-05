@@ -1,6 +1,7 @@
 ---
 
-- hosts: localhost
+- name: Demo to provision AWS VPC and EC2
+  hosts: localhost
   gather_facts: false
   # become: yes
   # become_method: sudo
@@ -11,8 +12,16 @@
   
   roles:
     - roles/aws_create_vpc
+    - roles/aws_provision_ec2
 #    - roles/docker
+
+- name: Install Docker CE into EC2 instances
+  hosts: ec2_nodes
+  environment:
+    ANSIBLE_HOST_KEY_CHECKING: False
+
+  vars_files:
+    - group_vars/common.yml
   
-  tasks:
-    - name: Testing get_vpc_facts
-      include_tasks: roles/aws_create_vpc/tasks/get_vpc_facts.yml
+  roles:
+    - { role: roles/docker, become: yes }
