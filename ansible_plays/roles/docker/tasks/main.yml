@@ -3,6 +3,10 @@
 
 # This Role requires a RHEL / CENTOS base OS
 
+# This role performs the following:
+# - Install and Configure Docker CE
+# - Pull/Run nginx container
+
 - name: START Role docker
   debug:
     msg: "START execution of role/docker"
@@ -48,5 +52,20 @@
 - name: Start Docker and configure as a boot startup service
   service:
     name: "docker"
-    state: "started"
+    state: "restarted"
     enabled: "yes"
+
+- name: Create docker network
+  docker_network:
+    name: "{{ docker.network_name }}"
+
+- name: Create Nginx container and connect to network
+  docker_container:
+    name: "{{ ansible_hostname }}-nginx"
+    image: "{{ nginx.image }}"    
+    # pull: yes
+    hostname: "{{ ansible_hostname }}-nginx"
+    networks:
+      - name: "{{ docker.network_name }}"
+    exposed_ports: "{{ nginx.exposed_ports }}"
+    published_ports: "{{ nginx.published_ports }}"

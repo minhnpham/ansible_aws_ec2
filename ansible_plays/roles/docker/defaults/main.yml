@@ -12,3 +12,15 @@ docker:
     - "docker-ce"
   pip:
     - "docker"
+  network_name: "mydocker-net"
+
+nginx:
+  image: "nginx:1.15"
+  exposed_ports:
+    - 80
+    - 8080
+    - 443
+  published_ports:
+    - 80:80
+    - 8080:8080
+    - 443:443
