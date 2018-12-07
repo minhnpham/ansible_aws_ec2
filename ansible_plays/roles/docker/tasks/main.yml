@@ -13,22 +13,17 @@
     state: "latest"
     update_cache: "yes"
     use_backend: yum
-#   become: yes
-#   become_user: root
-#   become_method: sudo
 
 - name: Add the gpg key for the Docker repo
   rpm_key:
     key: "{{ docker.gpg_key }}"
     state: "present"
-#   become: yes
 
 - name: Add Docker repo from the remote url
   get_url:
     url: "{{ docker.repo_url }}"
     dest: "{{ docker.repo_path }}"
     mode: 0644
-#   become: yes
 
 - name: Install Docker-CE and dependency packages
   yum:
@@ -37,13 +32,11 @@
     update_cache: "yes"
     use_backend: yum
   with_items: "{{ docker.packages }}"
-#   become: yes
 
 - name: Install pip
   easy_install:
     name: pip
     state: latest
-#   become: yes
 
 # This is required so we can use the Ansible docker_image and docker_container modules
 - name: Install the Docker SDK for Python
@@ -51,11 +44,9 @@
     name: "{{ item }}"
     extra_args: "-I"
   with_items: "{{ docker.pip }}"
-#   become: yes
 
 - name: Start Docker and configure as a boot startup service
   service:
     name: "docker"
     state: "started"
     enabled: "yes"
-#   become: yes
