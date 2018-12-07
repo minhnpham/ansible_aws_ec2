@@ -11,9 +11,10 @@
   roles:
     - roles/aws_create_vpc
     - roles/aws_provision_ec2
-#    - roles/docker
 
-- name: Install Docker CE into EC2 instances
+# Configure firewalld
+# Install and Configure Docker CE
+- name: Setup EC2 nodes
   hosts: ec2_nodes
   # user: centos  
   environment:
@@ -24,5 +25,5 @@
     - group_vars/common.yml
   
   roles:
+    - { role: roles/firewalld, become: yes, become_method: sudo }
     - { role: roles/docker, become: yes, become_method: sudo }
-    # - roles/docker

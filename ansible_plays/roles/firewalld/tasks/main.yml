@@ -1,0 +1,40 @@
+---
+# tasks file for roles/firewalld
+
+# This role performs the following:
+# - Install firewalld if not present
+# - Configures OS Firewall to deny ALL apart from http and ssh
+- name: START Role firewalld
+  debug:
+    msg: "START execution of role/firewalld"
+
+- name: Update all current installed packages
+  yum:
+    name: "*"
+    state: "latest"
+    update_cache: "yes"
+    use_backend: yum
+
+- name: Install Firewalld if not present
+  yum:
+    name: "firewalld"
+    state: "latest"
+    update_cache: "yes"
+    use_backend: yum
+
+- name: Start firewalld and set as a boot startup service
+  service:
+    name: "firewalld"
+    state: "started"
+    enabled: "yes"
+
+- name: Configure firewalld rules
+  firewalld:
+    zone: public
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - http
+    - https
+    - ssh

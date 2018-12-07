@@ -5,9 +5,6 @@
 # - Creates/Saves a EC2 key pair
 # - Creates a EC2 instance with CENTOS 7
 # - Configures Security Group for http and ssh
-# - Configures OS Firewall to deny ALL apart from http and ssh
-# - Install Docker CE
-# - Deploy and Start nginx container
 
 - name: START Role aws_provision_ec2
   debug:
@@ -36,7 +33,7 @@
     mode: 0600
   when: my_aws_vpc_key.changed
 
-# Creates a EC2 instance
+# Creates a EC2 instance, the tag parameters ensure only the exact number of instances base on exact_count is running
 - name: Creates a EC2 instance
   ec2:
     key_name: "{{ aws_vpc_key }}"
@@ -44,7 +41,12 @@
     image: "{{ ec2.t2_micro_centos7.ami }}"
     wait: yes
     wait_timeout: 500
-    count: 1
+    # count: 1
+    count_tag:
+      res_group_tag: "{{ res_group_tag }}"
+      category: "webserver"
+      Name: "MNP_centos7_docker_nginx"
+    exact_count: 1
     monitoring: yes
     vpc_subnet_id: "{{ my_vpc_subnet_ids['public-az1'] }}"
     group:
@@ -65,7 +67,7 @@
 # Waits for EC2 instance SSH to come up before continuing with the rest of provisioning
 - name: Wait for EC2 instance SSH
   wait_for:
-    host: "{{ my_ec2.instances[0].public_ip }}"
+    host: "{{ my_ec2.tagged_instances[0].public_ip }}"
     port: 22
     delay: 15
     state: started
@@ -74,8 +76,7 @@
 - name: Add EC2 host into inventory
   add_host:
     groups: ec2_nodes
-    hostname: "{{ my_ec2.instances[0].public_ip }}"
+    hostname: "{{ my_ec2.tagged_instances[0].public_ip }}"
     # ansible_user: "{{ ec2.t2_micro_centos7.default_username }}"
     ansible_ssh_user: "{{ ec2.t2_micro_centos7.default_username }}"
     ansible_ssh_private_key_file: "{{ playbook_dir }}/aws-ec2-key.pem"
-    # ansible_become: yes
