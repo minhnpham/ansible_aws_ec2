@@ -20,7 +20,7 @@
 - name: DEBUG my_vpc_id
   debug:
     var: my_vpc_id
-  when: DEBUGMODE
+  when: DEBUGLVL > 0
 
 # --------
 
@@ -40,7 +40,7 @@
 - name: DEBUG my_vpc_subnet_ids
   debug:
     var: my_vpc_subnet_ids
-  when: DEBUGMODE
+  when: DEBUGLVL > 0
 
 # --------
 
@@ -60,7 +60,7 @@
 - name: DEBUG my_vpc_sg_ids
   debug:
     var: my_vpc_sg_ids
-  when: DEBUGMODE
+  when: DEBUGLVL > 0
 
 # --------
 
@@ -79,4 +79,4 @@
 - name: DEBUG my_vpc_igw_id
   debug:
     var: my_vpc_igw_id
-  when: DEBUGMODE
+  when: DEBUGLVL > 0

@@ -41,7 +41,7 @@
 - name: DEBUG my_vpc_subnets
   debug:
     var: my_vpc_subnets
-  when: DEBUGMODE
+  when: DEBUGLVL > 0
 
 # Loop my_vpc_subnet.results list, to Parse/Set the subnet details into the dict vpc_subnet_ids
 - name: Set fact VPC subnet IDs
@@ -52,12 +52,12 @@
 - name: DEBUG vpc_subnet_ids
   debug:
     var: vpc_subnet_ids
-  when: DEBUGMODE
+  when: DEBUGLVL > 0
 
 - name: DEBUG vpc_security_groups
   debug:
     var: vpc_security_groups
-  when: DEBUGMODE
+  when: DEBUGLVL > 0
 
 # Create Security Groups
 - name: Create Security Groups

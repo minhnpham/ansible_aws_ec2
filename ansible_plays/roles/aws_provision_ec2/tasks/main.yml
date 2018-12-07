@@ -27,7 +27,7 @@
 - name: DEBUG my_aws_vpc_key
   debug:
     var: my_aws_vpc_key
-  when: DEBUGMODE
+  when: DEBUGLVL > 0
 
 - name: Save EC2 private key pair
   copy:
@@ -60,7 +60,7 @@
 - name: DEBUG my_ec2
   debug:
     var: my_ec2
-  when: DEBUGMODE
+  when: DEBUGLVL > 0
 
 # Waits for EC2 instance SSH to come up before continuing with the rest of provisioning
 - name: Wait for EC2 instance SSH
