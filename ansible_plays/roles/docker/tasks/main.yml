@@ -69,3 +69,13 @@
       - name: "{{ docker.network_name }}"
     exposed_ports: "{{ nginx.exposed_ports }}"
     published_ports: "{{ nginx.published_ports }}"
+
+- name: Check healthiness of Nginx container
+  command: docker inspect --format "{{ '{{.State.Status}}' }}" {{ ansible_hostname }}-nginx
+  register: nginx_status
+  failed_when: nginx_status.stdout == "running"
+
+- name: DEBUG nginx_status
+  debug:
+    var: nginx_status
+  when: DEBUGLVL > 2
