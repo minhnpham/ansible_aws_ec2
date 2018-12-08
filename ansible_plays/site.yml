@@ -12,15 +12,13 @@
     - roles/aws_create_vpc
     - roles/aws_provision_ec2
 
+# ---------
+
 # Configure firewalld
 # Install and Configure Docker CE
 # Pull/Run Nginx docker container
 - name: Setup EC2 nodes
   hosts: ec2_nodes
-  # user: centos  
-  environment:
-    ANSIBLE_HOST_KEY_CHECKING: False
-  # gather_facts: true
 
   vars_files:
     - group_vars/common.yml
