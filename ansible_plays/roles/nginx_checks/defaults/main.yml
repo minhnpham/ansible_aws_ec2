@@ -1,2 +1,5 @@
 ---
 # defaults file for roles/nginx_checks
+
+nginx:
+  www_path: "/usr/share/nginx/html"

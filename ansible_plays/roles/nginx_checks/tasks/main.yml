@@ -70,3 +70,12 @@
     - name: Word that occurs the most on the page
       debug:
         msg: "Word that occurs the most on the nginx default page is = {{ pWords_dictSorted[0][0] }}"
+    
+    - name: Create Word Frequency Test result to nginx results page
+      shell: |
+        echo "<html><body>Word that occurs the most on the nginx default page is <b>{{ pWords_dictSorted[0][0] }}</b></body></html>" > wordcountresults.html
+
+    - name: Copy Word Count Test result to nginx www directory
+      command: "docker cp wordcountresults.html {{ ansible_hostname }}-nginx:{{ nginx.www_path }}"
+      become: yes
+      
