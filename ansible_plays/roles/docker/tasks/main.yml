@@ -74,9 +74,9 @@
 - name: Check healthiness of Nginx container
   command: docker inspect --format "{{ '{{.State.Status}}' }}" {{ ansible_hostname }}-nginx
   register: nginx_status
-  failed_when: nginx_status.stdout == "running"
+  failed_when: nginx_status.stdout != "running"
 
 - name: DEBUG nginx_status
   debug:
     var: nginx_status
-  when: DEBUGLVL > 2
+  when: DEBUGLVL > 1
