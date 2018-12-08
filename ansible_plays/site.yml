@@ -28,4 +28,4 @@
   roles:
     - { role: roles/firewalld, become: yes, become_method: sudo }
     - { role: roles/docker, become: yes, become_method: sudo }
-    # - { role: roles/docker_nginx, become: yes, become_method: sudo }
+    - { role: roles/nginx_checks }
