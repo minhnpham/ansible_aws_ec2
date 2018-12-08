@@ -1,0 +1,72 @@
+---
+# tasks file for roles/nginx_checks
+
+# This role performs the following:
+# - Fetches the output of the nginx default http page
+# - Prints out the word that occurs the most on the page (exclude html tags)
+- name: START Role nginx_checks
+  debug:
+    msg: "START execution of role/nginx_checks"
+
+- name: Fetch nginx default http page
+  uri: 
+    url: "http://{{ ansible_hostname }}"
+    method: GET
+    return_content: yes
+  register: nginx_fetch
+  failed_when: nginx_fetch.status != 200
+
+- name: DEBUG nginx_fetch
+  debug:
+    var: nginx_fetch
+  when: DEBUGLVL > 1
+
+# ----------
+- name: Parse page content for most frequent word
+  block:
+    - name: SET Fact - page contents
+      set_fact: 
+        pContents: "{{ nginx_fetch.content }}"
+
+    - name: Strip out HTML tags and find all words from page contents
+      vars:
+        regexHtmlTags: '<[^(>|<)]*>'
+        regexWordsOnly: '[A-Za-z0-9_\-]+'
+      set_fact:
+        pWordsOnly: "{{ pContents | regex_replace( regexHtmlTags, '' ) | regex_findall( regexWordsOnly ) }}"
+
+    - name: DEBUG pWordsOnly
+      debug:
+        var: pWordsOnly
+      when: DEBUGLVL > 2
+    
+    - name: Initialize Word Counter Dict
+      set_fact:
+        pWords_dict: "{{ pWords_dict | default({}) | combine( {item: 0} ) }}"
+      loop: "{{ pWordsOnly }}"
+
+    - name: Count word frequency
+      vars:
+        count: "{{ pWords_dict[item] | int + 1 }}"
+      set_fact:
+        pWords_dict: "{{ pWords_dict | combine({ item: count }) }}"
+      loop: "{{ pWordsOnly }}"
+      when: item in pWords_dict
+
+    - name: DEBUG pWords_dict
+      debug:
+        var: pWords_dict
+      when: DEBUGLVL > 2
+    
+    - name: Sort by word frequency in descending order
+      set_fact:
+        pWords_dictSorted: "{{ pWords_dict | dictsort (false, 'value', reverse=true) }}"
+
+    - name: DEBUG pWords_dictSorted
+      debug:
+        var: pWords_dictSorted
+      when: DEBUGLVL > 2
+
+    - name: Word that occurs the most on the page
+      debug:
+        msg: "Word that occurs the most on the nginx default page is = {{ pWords_dictSorted[0][0] }}"
