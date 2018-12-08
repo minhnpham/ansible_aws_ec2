@@ -6,6 +6,7 @@
 # This role performs the following:
 # - Install and Configure Docker CE
 # - Pull/Run nginx container
+# - Health Checks to see if nginx container is running
 
 - name: START Role docker
   debug:
