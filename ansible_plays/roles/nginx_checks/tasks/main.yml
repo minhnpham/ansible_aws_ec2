@@ -74,8 +74,24 @@
     - name: Create Word Frequency Test result to nginx results page
       shell: |
         echo "<html><body>Word that occurs the most on the nginx default page is <b>{{ pWords_dictSorted[0][0] }}</b></body></html>" > wordcountresults.html
-
-    - name: Copy Word Count Test result to nginx www directory
-      command: "docker cp wordcountresults.html {{ ansible_hostname }}-nginx:{{ nginx.www_path }}"
+        docker cp wordcountresults.html {{ ansible_hostname }}-nginx:{{ nginx.www_path }}
       become: yes
+
+    # - name: Copy Word Count Test result to nginx www directory
+    #   command: "docker cp wordcountresults.html {{ ansible_hostname }}-nginx:{{ nginx.www_path }}"
+    #   become: yes
+
+    # while true; do date; docker stats --no-stream > docker_stats.log; sleep 9; done
+
+- name: Setup cron job for nginx container resource usage stats
+  vars:    
+    container_name: "{{ ansible_hostname }}-nginx"
+    logfile_path: "/var/log/docker_stats.log"
+  cron:
+    name: DOCKER_STATS_MONITOR
+    minute: "*"
+    hour: "*"
+    # job: "x=1; while [ $x -le 5 ]; do date > /tmp/docker_stats.log; docker stats --no-stream >> /tmp/docker_stats.log; sleep 9; x=$(( $x + 1 )); done"
+    job: "x=1; while [ $x -le 5 ]; do date > {{ logfile_path }}; docker stats --no-stream >> {{ logfile_path }}; sleep 9; x=$(( $x + 1 )); done"
+  become: yes
       
