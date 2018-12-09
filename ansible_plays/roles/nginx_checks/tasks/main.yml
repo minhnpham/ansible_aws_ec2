@@ -3,7 +3,9 @@
 
 # This role performs the following:
 # - Fetches the output of the nginx default http page
-# - Prints out the word that occurs the most on the page (exclude html tags)
+# - Create Word Frequency Test result to nginx results page
+# - Setup cron job for nginx container resource usage stats
+
 - name: START Role nginx_checks
   debug:
     msg: "START execution of role/nginx_checks"
